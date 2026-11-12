@@ -36,11 +36,20 @@ def oriented(builder, orient):
     return s.translate(V(-bb.xmin, -bb.ymin, -bb.zmin))
 
 
+def normalise_step(path):
+    """Replace the FILE_NAME timestamp so re-exports are byte-identical (keeps git clean after test runs)."""
+    import re
+    t = open(path).read()
+    t = re.sub(r"(FILE_NAME\('[^']*',')[^']*(')", r"\g<1>1970-01-01T00:00:00\g<2>", t, count=1)
+    open(path, "w").write(t)
+
+
 def export_parts():
     info = {}
     for name, (b, mat, qty, orient) in printable().items():
         s = oriented(b, orient)
         cq.exporters.export(cq.Workplane(obj=s), os.path.join(OUT, f"{name}.step"))
+        normalise_step(os.path.join(OUT, f"{name}.step"))
         cq.exporters.export(cq.Workplane(obj=s), os.path.join(OUT, f"{name}.stl"), tolerance=0.03, angularTolerance=0.1)
         bb = s.BoundingBox()
         info[name] = dict(material=mat, qty=qty, volume_mm3=s.Volume(), area_mm2=s.Area(),
