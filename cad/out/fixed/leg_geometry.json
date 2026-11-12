@@ -1,0 +1,1602 @@
+{
+ "units": "mm, deg",
+ "version": "spider-cad-v1",
+ "tibia_mode": "fixed",
+ "notes": [
+  "Leg-local frame: origin on the coxa yaw axis at body-underside height (z=0 = body underside), +r radial outward, +t tangential (CCW from +r seen from above), +z up. The whole linkage lies in the plane t=0 (foot has no lateral offset).",
+  "Body frame: +x forward, +y left, +z up. Leg heading h = atan2(hip_y, hip_x); yaw psi is CCW-positive seen from above, measured from the heading. Foot body-frame xy = hip + r*(cos(h+psi), sin(h+psi)).",
+  "Femur angle q is CCW-positive in the (r,z) plane (positive = knee up). Femur elevation phi = phi0 + q.",
+  "Servo convention (assumed, UNVERIFIED on hardware): servo_angle = 90 + sign*angle; sign +1 for both joints. Determine the real sign / trim per servo with the firmware calibration mode.",
+  "foot_contact is the lowest point of the 12 mm pad sphere (ground contact). Ground plane z = -ride_height at neutral.",
+  "Femur-lift IK is a lookup: foot (r,z) is a function of q only (2-DOF coupling). Use the foot_table below."
+ ],
+ "leg_names": [
+  "FL",
+  "FR",
+  "RR",
+  "RL"
+ ],
+ "hips": [
+  {
+   "name": "FL",
+   "xy": [
+    45.0,
+    45.0
+   ],
+   "heading_deg": 45.0
+  },
+  {
+   "name": "FR",
+   "xy": [
+    45.0,
+    -45.0
+   ],
+   "heading_deg": -45.0
+  },
+  {
+   "name": "RR",
+   "xy": [
+    -45.0,
+    -45.0
+   ],
+   "heading_deg": -135.0
+  },
+  {
+   "name": "RL",
+   "xy": [
+    -45.0,
+    45.0
+   ],
+   "heading_deg": 135.0
+  }
+ ],
+ "links": {
+  "coxa_len": 25.0,
+  "femur_len": 45.0,
+  "tibia_len_knee_to_axis_tip": 70.0,
+  "foot_pad_diameter": 12.0,
+  "foot_pad_center_from_knee": 64.0,
+  "tibia_tilt_from_vertical_deg": 8.0
+ },
+ "joints": {
+  "coxa": {
+   "axis_leg_local": [
+    0,
+    0,
+    1
+   ],
+   "point": [
+    0,
+    0,
+    0
+   ],
+   "servo": "MG90S",
+   "zero_angle_def": "psi = 0 -> leg along its hip heading (diagonal)"
+  },
+  "femur": {
+   "axis_leg_local": [
+    0,
+    1,
+    0
+   ],
+   "point_rz": [
+    25.0,
+    -19.65
+   ],
+   "servo": "MG996R",
+   "zero_angle_def": "q = 0 -> femur elevation phi0 = 18.0 deg above horizontal; q positive = knee up"
+  },
+  "knee_passive": {
+   "point_rz_at_q0": [
+    67.798,
+    -5.744
+   ],
+   "type": "fixed bent tibia (fallback)"
+  }
+ },
+ "fourbar": null,
+ "servo_zero_deg": {
+  "coxa": 90.0,
+  "femur": 90.0
+ },
+ "servo_sign": {
+  "coxa": 1,
+  "femur": 1
+ },
+ "limits_deg": {
+  "coxa": [
+   -45.0,
+   45.0
+  ],
+  "femur": [
+   -30.0,
+   60.0
+  ]
+ },
+ "servo_limits_deg_absolute": {
+  "coxa": [
+   45.0,
+   135.0
+  ],
+  "femur": [
+   60.0,
+   150.0
+  ]
+ },
+ "neutral": {
+  "q": 0.0,
+  "psi": 0.0,
+  "foot_contact_rz": [
+   76.705,
+   -75.121
+  ],
+  "ride_height_body_underside_to_ground": 75.121
+ },
+ "body": {
+  "width": 120.0,
+  "hip_square": 90.0,
+  "height": 45.0,
+  "imu_xy": [
+   0.0,
+   0.0
+  ]
+ },
+ "foot_table": [
+  {
+   "q": -30,
+   "knee": [
+    69.017,
+    -29.006
+   ],
+   "foot_contact": [
+    45.042,
+    -94.346
+   ],
+   "foot_center": [
+    45.042,
+    -88.346
+   ],
+   "tibia_dev_from_vertical_deg": -22.0
+  },
+  {
+   "q": -29,
+   "knee": [
+    69.173,
+    -28.236
+   ],
+   "foot_contact": [
+    46.238,
+    -93.986
+   ],
+   "foot_center": [
+    46.238,
+    -87.986
+   ],
+   "tibia_dev_from_vertical_deg": -21.0
+  },
+  {
+   "q": -28,
+   "knee": [
+    69.316,
+    -27.464
+   ],
+   "foot_contact": [
+    47.427,
+    -93.604
+   ],
+   "foot_center": [
+    47.427,
+    -87.604
+   ],
+   "tibia_dev_from_vertical_deg": -20.0
+  },
+  {
+   "q": -27,
+   "knee": [
+    69.446,
+    -26.69
+   ],
+   "foot_contact": [
+    48.61,
+    -93.203
+   ],
+   "foot_center": [
+    48.61,
+    -87.203
+   ],
+   "tibia_dev_from_vertical_deg": -19.0
+  },
+  {
+   "q": -26,
+   "knee": [
+    69.562,
+    -25.913
+   ],
+   "foot_contact": [
+    49.785,
+    -92.78
+   ],
+   "foot_center": [
+    49.785,
+    -86.78
+   ],
+   "tibia_dev_from_vertical_deg": -18.0
+  },
+  {
+   "q": -25,
+   "knee": [
+    69.665,
+    -25.134
+   ],
+   "foot_contact": [
+    50.953,
+    -92.338
+   ],
+   "foot_center": [
+    50.953,
+    -86.338
+   ],
+   "tibia_dev_from_vertical_deg": -17.0
+  },
+  {
+   "q": -24,
+   "knee": [
+    69.753,
+    -24.354
+   ],
+   "foot_contact": [
+    52.113,
+    -91.875
+   ],
+   "foot_center": [
+    52.113,
+    -85.875
+   ],
+   "tibia_dev_from_vertical_deg": -16.0
+  },
+  {
+   "q": -23,
+   "knee": [
+    69.829,
+    -23.572
+   ],
+   "foot_contact": [
+    53.264,
+    -91.391
+   ],
+   "foot_center": [
+    53.264,
+    -85.391
+   ],
+   "tibia_dev_from_vertical_deg": -15.0
+  },
+  {
+   "q": -22,
+   "knee": [
+    69.89,
+    -22.789
+   ],
+   "foot_contact": [
+    54.407,
+    -90.888
+   ],
+   "foot_center": [
+    54.407,
+    -84.888
+   ],
+   "tibia_dev_from_vertical_deg": -14.0
+  },
+  {
+   "q": -21,
+   "knee": [
+    69.938,
+    -22.005
+   ],
+   "foot_contact": [
+    55.541,
+    -90.365
+   ],
+   "foot_center": [
+    55.541,
+    -84.365
+   ],
+   "tibia_dev_from_vertical_deg": -13.0
+  },
+  {
+   "q": -20,
+   "knee": [
+    69.973,
+    -21.22
+   ],
+   "foot_contact": [
+    56.666,
+    -89.822
+   ],
+   "foot_center": [
+    56.666,
+    -83.822
+   ],
+   "tibia_dev_from_vertical_deg": -12.0
+  },
+  {
+   "q": -19,
+   "knee": [
+    69.993,
+    -20.435
+   ],
+   "foot_contact": [
+    57.781,
+    -89.259
+   ],
+   "foot_center": [
+    57.781,
+    -83.259
+   ],
+   "tibia_dev_from_vertical_deg": -11.0
+  },
+  {
+   "q": -18,
+   "knee": [
+    70.0,
+    -19.65
+   ],
+   "foot_contact": [
+    58.887,
+    -88.678
+   ],
+   "foot_center": [
+    58.887,
+    -82.678
+   ],
+   "tibia_dev_from_vertical_deg": -10.0
+  },
+  {
+   "q": -17,
+   "knee": [
+    69.993,
+    -18.865
+   ],
+   "foot_contact": [
+    59.981,
+    -88.077
+   ],
+   "foot_center": [
+    59.981,
+    -82.077
+   ],
+   "tibia_dev_from_vertical_deg": -9.0
+  },
+  {
+   "q": -16,
+   "knee": [
+    69.973,
+    -18.08
+   ],
+   "foot_contact": [
+    61.066,
+    -87.457
+   ],
+   "foot_center": [
+    61.066,
+    -81.457
+   ],
+   "tibia_dev_from_vertical_deg": -8.0
+  },
+  {
+   "q": -15,
+   "knee": [
+    69.938,
+    -17.295
+   ],
+   "foot_contact": [
+    62.139,
+    -86.818
+   ],
+   "foot_center": [
+    62.139,
+    -80.818
+   ],
+   "tibia_dev_from_vertical_deg": -7.0
+  },
+  {
+   "q": -14,
+   "knee": [
+    69.89,
+    -16.511
+   ],
+   "foot_contact": [
+    63.201,
+    -86.16
+   ],
+   "foot_center": [
+    63.201,
+    -80.16
+   ],
+   "tibia_dev_from_vertical_deg": -6.0
+  },
+  {
+   "q": -13,
+   "knee": [
+    69.829,
+    -15.728
+   ],
+   "foot_contact": [
+    64.251,
+    -85.484
+   ],
+   "foot_center": [
+    64.251,
+    -79.484
+   ],
+   "tibia_dev_from_vertical_deg": -5.0
+  },
+  {
+   "q": -12,
+   "knee": [
+    69.753,
+    -14.946
+   ],
+   "foot_contact": [
+    65.289,
+    -84.79
+   ],
+   "foot_center": [
+    65.289,
+    -78.79
+   ],
+   "tibia_dev_from_vertical_deg": -4.0
+  },
+  {
+   "q": -11,
+   "knee": [
+    69.665,
+    -14.166
+   ],
+   "foot_contact": [
+    66.315,
+    -84.078
+   ],
+   "foot_center": [
+    66.315,
+    -78.078
+   ],
+   "tibia_dev_from_vertical_deg": -3.0
+  },
+  {
+   "q": -10,
+   "knee": [
+    69.562,
+    -13.387
+   ],
+   "foot_contact": [
+    67.328,
+    -83.348
+   ],
+   "foot_center": [
+    67.328,
+    -77.348
+   ],
+   "tibia_dev_from_vertical_deg": -2.0
+  },
+  {
+   "q": -9,
+   "knee": [
+    69.446,
+    -12.61
+   ],
+   "foot_contact": [
+    68.329,
+    -82.601
+   ],
+   "foot_center": [
+    68.329,
+    -76.601
+   ],
+   "tibia_dev_from_vertical_deg": -1.0
+  },
+  {
+   "q": -8,
+   "knee": [
+    69.316,
+    -11.836
+   ],
+   "foot_contact": [
+    69.316,
+    -81.836
+   ],
+   "foot_center": [
+    69.316,
+    -75.836
+   ],
+   "tibia_dev_from_vertical_deg": 0.0
+  },
+  {
+   "q": -7,
+   "knee": [
+    69.173,
+    -11.064
+   ],
+   "foot_contact": [
+    70.29,
+    -81.054
+   ],
+   "foot_center": [
+    70.29,
+    -75.054
+   ],
+   "tibia_dev_from_vertical_deg": 1.0
+  },
+  {
+   "q": -6,
+   "knee": [
+    69.017,
+    -10.294
+   ],
+   "foot_contact": [
+    71.25,
+    -80.255
+   ],
+   "foot_center": [
+    71.25,
+    -74.255
+   ],
+   "tibia_dev_from_vertical_deg": 2.0
+  },
+  {
+   "q": -5,
+   "knee": [
+    68.847,
+    -9.527
+   ],
+   "foot_contact": [
+    72.196,
+    -79.439
+   ],
+   "foot_center": [
+    72.196,
+    -73.439
+   ],
+   "tibia_dev_from_vertical_deg": 3.0
+  },
+  {
+   "q": -4,
+   "knee": [
+    68.663,
+    -8.764
+   ],
+   "foot_contact": [
+    73.128,
+    -78.608
+   ],
+   "foot_center": [
+    73.128,
+    -72.608
+   ],
+   "tibia_dev_from_vertical_deg": 4.0
+  },
+  {
+   "q": -3,
+   "knee": [
+    68.467,
+    -8.003
+   ],
+   "foot_contact": [
+    74.045,
+    -77.76
+   ],
+   "foot_center": [
+    74.045,
+    -71.76
+   ],
+   "tibia_dev_from_vertical_deg": 5.0
+  },
+  {
+   "q": -2,
+   "knee": [
+    68.257,
+    -7.246
+   ],
+   "foot_contact": [
+    74.947,
+    -76.896
+   ],
+   "foot_center": [
+    74.947,
+    -70.896
+   ],
+   "tibia_dev_from_vertical_deg": 6.0
+  },
+  {
+   "q": -1,
+   "knee": [
+    68.034,
+    -6.493
+   ],
+   "foot_contact": [
+    75.833,
+    -76.016
+   ],
+   "foot_center": [
+    75.833,
+    -70.016
+   ],
+   "tibia_dev_from_vertical_deg": 7.0
+  },
+  {
+   "q": 0,
+   "knee": [
+    67.798,
+    -5.744
+   ],
+   "foot_contact": [
+    76.705,
+    -75.121
+   ],
+   "foot_center": [
+    76.705,
+    -69.121
+   ],
+   "tibia_dev_from_vertical_deg": 8.0
+  },
+  {
+   "q": 1,
+   "knee": [
+    67.548,
+    -4.999
+   ],
+   "foot_contact": [
+    77.56,
+    -74.211
+   ],
+   "foot_center": [
+    77.56,
+    -68.211
+   ],
+   "tibia_dev_from_vertical_deg": 9.0
+  },
+  {
+   "q": 2,
+   "knee": [
+    67.286,
+    -4.259
+   ],
+   "foot_contact": [
+    78.4,
+    -73.287
+   ],
+   "foot_center": [
+    78.4,
+    -67.287
+   ],
+   "tibia_dev_from_vertical_deg": 10.0
+  },
+  {
+   "q": 3,
+   "knee": [
+    67.011,
+    -3.523
+   ],
+   "foot_contact": [
+    79.223,
+    -72.348
+   ],
+   "foot_center": [
+    79.223,
+    -66.348
+   ],
+   "tibia_dev_from_vertical_deg": 11.0
+  },
+  {
+   "q": 4,
+   "knee": [
+    66.723,
+    -2.793
+   ],
+   "foot_contact": [
+    80.03,
+    -71.394
+   ],
+   "foot_center": [
+    80.03,
+    -65.394
+   ],
+   "tibia_dev_from_vertical_deg": 12.0
+  },
+  {
+   "q": 5,
+   "knee": [
+    66.423,
+    -2.067
+   ],
+   "foot_contact": [
+    80.82,
+    -70.427
+   ],
+   "foot_center": [
+    80.82,
+    -64.427
+   ],
+   "tibia_dev_from_vertical_deg": 13.0
+  },
+  {
+   "q": 6,
+   "knee": [
+    66.11,
+    -1.347
+   ],
+   "foot_contact": [
+    81.593,
+    -69.446
+   ],
+   "foot_center": [
+    81.593,
+    -63.446
+   ],
+   "tibia_dev_from_vertical_deg": 14.0
+  },
+  {
+   "q": 7,
+   "knee": [
+    65.784,
+    -0.632
+   ],
+   "foot_contact": [
+    82.348,
+    -68.451
+   ],
+   "foot_center": [
+    82.348,
+    -62.451
+   ],
+   "tibia_dev_from_vertical_deg": 15.0
+  },
+  {
+   "q": 8,
+   "knee": [
+    65.446,
+    0.077
+   ],
+   "foot_contact": [
+    83.087,
+    -67.444
+   ],
+   "foot_center": [
+    83.087,
+    -61.444
+   ],
+   "tibia_dev_from_vertical_deg": 16.0
+  },
+  {
+   "q": 9,
+   "knee": [
+    65.095,
+    0.78
+   ],
+   "foot_contact": [
+    83.807,
+    -66.424
+   ],
+   "foot_center": [
+    83.807,
+    -60.424
+   ],
+   "tibia_dev_from_vertical_deg": 17.0
+  },
+  {
+   "q": 10,
+   "knee": [
+    64.733,
+    1.476
+   ],
+   "foot_contact": [
+    84.51,
+    -65.391
+   ],
+   "foot_center": [
+    84.51,
+    -59.391
+   ],
+   "tibia_dev_from_vertical_deg": 18.0
+  },
+  {
+   "q": 11,
+   "knee": [
+    64.358,
+    2.166
+   ],
+   "foot_contact": [
+    85.194,
+    -64.347
+   ],
+   "foot_center": [
+    85.194,
+    -58.347
+   ],
+   "tibia_dev_from_vertical_deg": 19.0
+  },
+  {
+   "q": 12,
+   "knee": [
+    63.971,
+    2.85
+   ],
+   "foot_contact": [
+    85.86,
+    -63.29
+   ],
+   "foot_center": [
+    85.86,
+    -57.29
+   ],
+   "tibia_dev_from_vertical_deg": 20.0
+  },
+  {
+   "q": 13,
+   "knee": [
+    63.573,
+    3.527
+   ],
+   "foot_contact": [
+    86.508,
+    -62.222
+   ],
+   "foot_center": [
+    86.508,
+    -56.222
+   ],
+   "tibia_dev_from_vertical_deg": 21.0
+  },
+  {
+   "q": 14,
+   "knee": [
+    63.162,
+    4.196
+   ],
+   "foot_contact": [
+    87.137,
+    -61.143
+   ],
+   "foot_center": [
+    87.137,
+    -55.143
+   ],
+   "tibia_dev_from_vertical_deg": 22.0
+  },
+  {
+   "q": 15,
+   "knee": [
+    62.74,
+    4.859
+   ],
+   "foot_contact": [
+    87.747,
+    -60.054
+   ],
+   "foot_center": [
+    87.747,
+    -54.054
+   ],
+   "tibia_dev_from_vertical_deg": 23.0
+  },
+  {
+   "q": 16,
+   "knee": [
+    62.307,
+    5.514
+   ],
+   "foot_contact": [
+    88.338,
+    -58.953
+   ],
+   "foot_center": [
+    88.338,
+    -52.953
+   ],
+   "tibia_dev_from_vertical_deg": 24.0
+  },
+  {
+   "q": 17,
+   "knee": [
+    61.862,
+    6.161
+   ],
+   "foot_contact": [
+    88.909,
+    -57.843
+   ],
+   "foot_center": [
+    88.909,
+    -51.843
+   ],
+   "tibia_dev_from_vertical_deg": 25.0
+  },
+  {
+   "q": 18,
+   "knee": [
+    61.406,
+    6.8
+   ],
+   "foot_contact": [
+    89.462,
+    -56.722
+   ],
+   "foot_center": [
+    89.462,
+    -50.722
+   ],
+   "tibia_dev_from_vertical_deg": 26.0
+  },
+  {
+   "q": 19,
+   "knee": [
+    60.939,
+    7.432
+   ],
+   "foot_contact": [
+    89.994,
+    -55.593
+   ],
+   "foot_center": [
+    89.994,
+    -49.593
+   ],
+   "tibia_dev_from_vertical_deg": 27.0
+  },
+  {
+   "q": 20,
+   "knee": [
+    60.46,
+    8.055
+   ],
+   "foot_contact": [
+    90.507,
+    -54.454
+   ],
+   "foot_center": [
+    90.507,
+    -48.454
+   ],
+   "tibia_dev_from_vertical_deg": 28.0
+  },
+  {
+   "q": 21,
+   "knee": [
+    59.972,
+    8.669
+   ],
+   "foot_contact": [
+    90.999,
+    -53.306
+   ],
+   "foot_center": [
+    90.999,
+    -47.306
+   ],
+   "tibia_dev_from_vertical_deg": 29.0
+  },
+  {
+   "q": 22,
+   "knee": [
+    59.472,
+    9.275
+   ],
+   "foot_contact": [
+    91.472,
+    -52.15
+   ],
+   "foot_center": [
+    91.472,
+    -46.15
+   ],
+   "tibia_dev_from_vertical_deg": 30.0
+  },
+  {
+   "q": 23,
+   "knee": [
+    58.962,
+    9.873
+   ],
+   "foot_contact": [
+    91.924,
+    -50.986
+   ],
+   "foot_center": [
+    91.924,
+    -44.986
+   ],
+   "tibia_dev_from_vertical_deg": 31.0
+  },
+  {
+   "q": 24,
+   "knee": [
+    58.442,
+    10.461
+   ],
+   "foot_contact": [
+    92.356,
+    -49.814
+   ],
+   "foot_center": [
+    92.356,
+    -43.814
+   ],
+   "tibia_dev_from_vertical_deg": 32.0
+  },
+  {
+   "q": 25,
+   "knee": [
+    57.911,
+    11.04
+   ],
+   "foot_contact": [
+    92.768,
+    -48.635
+   ],
+   "foot_center": [
+    92.768,
+    -42.635
+   ],
+   "tibia_dev_from_vertical_deg": 33.0
+  },
+  {
+   "q": 26,
+   "knee": [
+    57.37,
+    11.61
+   ],
+   "foot_contact": [
+    93.159,
+    -47.449
+   ],
+   "foot_center": [
+    93.159,
+    -41.449
+   ],
+   "tibia_dev_from_vertical_deg": 34.0
+  },
+  {
+   "q": 27,
+   "knee": [
+    56.82,
+    12.17
+   ],
+   "foot_contact": [
+    93.529,
+    -46.256
+   ],
+   "foot_center": [
+    93.529,
+    -40.256
+   ],
+   "tibia_dev_from_vertical_deg": 35.0
+  },
+  {
+   "q": 28,
+   "knee": [
+    56.26,
+    12.72
+   ],
+   "foot_contact": [
+    93.878,
+    -45.057
+   ],
+   "foot_center": [
+    93.878,
+    -39.057
+   ],
+   "tibia_dev_from_vertical_deg": 36.0
+  },
+  {
+   "q": 29,
+   "knee": [
+    55.69,
+    13.261
+   ],
+   "foot_contact": [
+    94.206,
+    -43.852
+   ],
+   "foot_center": [
+    94.206,
+    -37.852
+   ],
+   "tibia_dev_from_vertical_deg": 37.0
+  },
+  {
+   "q": 30,
+   "knee": [
+    55.111,
+    13.792
+   ],
+   "foot_contact": [
+    94.513,
+    -42.641
+   ],
+   "foot_center": [
+    94.513,
+    -36.641
+   ],
+   "tibia_dev_from_vertical_deg": 38.0
+  },
+  {
+   "q": 31,
+   "knee": [
+    54.523,
+    14.312
+   ],
+   "foot_contact": [
+    94.799,
+    -41.425
+   ],
+   "foot_center": [
+    94.799,
+    -35.425
+   ],
+   "tibia_dev_from_vertical_deg": 39.0
+  },
+  {
+   "q": 32,
+   "knee": [
+    53.925,
+    14.822
+   ],
+   "foot_contact": [
+    95.064,
+    -40.205
+   ],
+   "foot_center": [
+    95.064,
+    -34.205
+   ],
+   "tibia_dev_from_vertical_deg": 40.0
+  },
+  {
+   "q": 33,
+   "knee": [
+    53.319,
+    15.322
+   ],
+   "foot_contact": [
+    95.307,
+    -38.98
+   ],
+   "foot_center": [
+    95.307,
+    -32.98
+   ],
+   "tibia_dev_from_vertical_deg": 41.0
+  },
+  {
+   "q": 34,
+   "knee": [
+    52.705,
+    15.81
+   ],
+   "foot_contact": [
+    95.529,
+    -37.751
+   ],
+   "foot_center": [
+    95.529,
+    -31.751
+   ],
+   "tibia_dev_from_vertical_deg": 42.0
+  },
+  {
+   "q": 35,
+   "knee": [
+    52.082,
+    16.289
+   ],
+   "foot_contact": [
+    95.73,
+    -36.518
+   ],
+   "foot_center": [
+    95.73,
+    -30.518
+   ],
+   "tibia_dev_from_vertical_deg": 43.0
+  },
+  {
+   "q": 36,
+   "knee": [
+    51.45,
+    16.756
+   ],
+   "foot_contact": [
+    95.908,
+    -35.282
+   ],
+   "foot_center": [
+    95.908,
+    -29.282
+   ],
+   "tibia_dev_from_vertical_deg": 44.0
+  },
+  {
+   "q": 37,
+   "knee": [
+    50.811,
+    17.212
+   ],
+   "foot_contact": [
+    96.066,
+    -34.043
+   ],
+   "foot_center": [
+    96.066,
+    -28.043
+   ],
+   "tibia_dev_from_vertical_deg": 45.0
+  },
+  {
+   "q": 38,
+   "knee": [
+    50.164,
+    17.657
+   ],
+   "foot_contact": [
+    96.201,
+    -32.801
+   ],
+   "foot_center": [
+    96.201,
+    -26.801
+   ],
+   "tibia_dev_from_vertical_deg": 46.0
+  },
+  {
+   "q": 39,
+   "knee": [
+    49.509,
+    18.09
+   ],
+   "foot_contact": [
+    96.315,
+    -31.558
+   ],
+   "foot_center": [
+    96.315,
+    -25.558
+   ],
+   "tibia_dev_from_vertical_deg": 47.0
+  },
+  {
+   "q": 40,
+   "knee": [
+    48.846,
+    18.512
+   ],
+   "foot_contact": [
+    96.408,
+    -30.312
+   ],
+   "foot_center": [
+    96.408,
+    -24.312
+   ],
+   "tibia_dev_from_vertical_deg": 48.0
+  },
+  {
+   "q": 41,
+   "knee": [
+    48.177,
+    18.923
+   ],
+   "foot_contact": [
+    96.478,
+    -29.065
+   ],
+   "foot_center": [
+    96.478,
+    -23.065
+   ],
+   "tibia_dev_from_vertical_deg": 49.0
+  },
+  {
+   "q": 42,
+   "knee": [
+    47.5,
+    19.321
+   ],
+   "foot_contact": [
+    96.527,
+    -27.817
+   ],
+   "foot_center": [
+    96.527,
+    -21.817
+   ],
+   "tibia_dev_from_vertical_deg": 50.0
+  },
+  {
+   "q": 43,
+   "knee": [
+    46.816,
+    19.708
+   ],
+   "foot_contact": [
+    96.554,
+    -26.569
+   ],
+   "foot_center": [
+    96.554,
+    -20.569
+   ],
+   "tibia_dev_from_vertical_deg": 51.0
+  },
+  {
+   "q": 44,
+   "knee": [
+    46.126,
+    20.083
+   ],
+   "foot_contact": [
+    96.559,
+    -25.32
+   ],
+   "foot_center": [
+    96.559,
+    -19.32
+   ],
+   "tibia_dev_from_vertical_deg": 52.0
+  },
+  {
+   "q": 45,
+   "knee": [
+    45.43,
+    20.445
+   ],
+   "foot_contact": [
+    96.542,
+    -24.071
+   ],
+   "foot_center": [
+    96.542,
+    -18.071
+   ],
+   "tibia_dev_from_vertical_deg": 53.0
+  },
+  {
+   "q": 46,
+   "knee": [
+    44.727,
+    20.796
+   ],
+   "foot_contact": [
+    96.504,
+    -22.823
+   ],
+   "foot_center": [
+    96.504,
+    -16.823
+   ],
+   "tibia_dev_from_vertical_deg": 54.0
+  },
+  {
+   "q": 47,
+   "knee": [
+    44.018,
+    21.134
+   ],
+   "foot_contact": [
+    96.444,
+    -21.575
+   ],
+   "foot_center": [
+    96.444,
+    -15.575
+   ],
+   "tibia_dev_from_vertical_deg": 55.0
+  },
+  {
+   "q": 48,
+   "knee": [
+    43.303,
+    21.46
+   ],
+   "foot_contact": [
+    96.362,
+    -20.329
+   ],
+   "foot_center": [
+    96.362,
+    -14.329
+   ],
+   "tibia_dev_from_vertical_deg": 56.0
+  },
+  {
+   "q": 49,
+   "knee": [
+    42.583,
+    21.773
+   ],
+   "foot_contact": [
+    96.258,
+    -19.084
+   ],
+   "foot_center": [
+    96.258,
+    -13.084
+   ],
+   "tibia_dev_from_vertical_deg": 57.0
+  },
+  {
+   "q": 50,
+   "knee": [
+    41.857,
+    22.073
+   ],
+   "foot_contact": [
+    96.132,
+    -17.842
+   ],
+   "foot_center": [
+    96.132,
+    -11.842
+   ],
+   "tibia_dev_from_vertical_deg": 58.0
+  },
+  {
+   "q": 51,
+   "knee": [
+    41.127,
+    22.361
+   ],
+   "foot_contact": [
+    95.985,
+    -16.601
+   ],
+   "foot_center": [
+    95.985,
+    -10.601
+   ],
+   "tibia_dev_from_vertical_deg": 59.0
+  },
+  {
+   "q": 52,
+   "knee": [
+    40.391,
+    22.636
+   ],
+   "foot_contact": [
+    95.817,
+    -15.364
+   ],
+   "foot_center": [
+    95.817,
+    -9.364
+   ],
+   "tibia_dev_from_vertical_deg": 60.0
+  },
+  {
+   "q": 53,
+   "knee": [
+    39.651,
+    22.898
+   ],
+   "foot_contact": [
+    95.626,
+    -14.129
+   ],
+   "foot_center": [
+    95.626,
+    -8.129
+   ],
+   "tibia_dev_from_vertical_deg": 61.0
+  },
+  {
+   "q": 54,
+   "knee": [
+    38.906,
+    23.148
+   ],
+   "foot_contact": [
+    95.414,
+    -12.899
+   ],
+   "foot_center": [
+    95.414,
+    -6.899
+   ],
+   "tibia_dev_from_vertical_deg": 62.0
+  },
+  {
+   "q": 55,
+   "knee": [
+    38.157,
+    23.384
+   ],
+   "foot_contact": [
+    95.181,
+    -11.672
+   ],
+   "foot_center": [
+    95.181,
+    -5.672
+   ],
+   "tibia_dev_from_vertical_deg": 63.0
+  },
+  {
+   "q": 56,
+   "knee": [
+    37.404,
+    23.607
+   ],
+   "foot_contact": [
+    94.926,
+    -10.449
+   ],
+   "foot_center": [
+    94.926,
+    -4.449
+   ],
+   "tibia_dev_from_vertical_deg": 64.0
+  },
+  {
+   "q": 57,
+   "knee": [
+    36.647,
+    23.817
+   ],
+   "foot_contact": [
+    94.651,
+    -9.231
+   ],
+   "foot_center": [
+    94.651,
+    -3.231
+   ],
+   "tibia_dev_from_vertical_deg": 65.0
+  },
+  {
+   "q": 58,
+   "knee": [
+    35.886,
+    24.013
+   ],
+   "foot_contact": [
+    94.353,
+    -8.018
+   ],
+   "foot_center": [
+    94.353,
+    -2.018
+   ],
+   "tibia_dev_from_vertical_deg": 66.0
+  },
+  {
+   "q": 59,
+   "knee": [
+    35.123,
+    24.197
+   ],
+   "foot_contact": [
+    94.035,
+    -6.81
+   ],
+   "foot_center": [
+    94.035,
+    -0.81
+   ],
+   "tibia_dev_from_vertical_deg": 67.0
+  },
+  {
+   "q": 60,
+   "knee": [
+    34.356,
+    24.367
+   ],
+   "foot_contact": [
+    93.696,
+    -5.608
+   ],
+   "foot_center": [
+    93.696,
+    0.392
+   ],
+   "tibia_dev_from_vertical_deg": 68.0
+  }
+ ]
+}
