@@ -50,3 +50,15 @@ def interferences(items, tol, moving=None):
 def verdict(ok, label, detail=""):
     print(f"{'PASS' if ok else 'FAIL'}: {label} {detail}".rstrip())
     return ok
+
+
+def firmware_poses():
+    """Poses commanded by the firmware gaits (cad/out/fw_poses.json, written by tools/dump_fw_poses.sh).
+    Returns [(name, psi_tuple, q_tuple)]; exits 1 if the file is missing (the gate must not silently pass)."""
+    import json
+    path = os.path.join(OUT, "fw_poses.json")
+    if not os.path.exists(path):
+        print("FAIL: cad/out/fw_poses.json missing (run tools/dump_fw_poses.sh)")
+        sys.exit(1)
+    d = json.load(open(path))
+    return [(p["name"], tuple(p["psi"]), tuple(p["q"])) for p in d["poses"]]

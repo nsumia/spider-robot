@@ -37,6 +37,9 @@ def main():
     for k in range(N):
         psi, q = gait.pose(k / N)
         jobs.append(("gait", psi, q, {0, 1, 2, 3}))
+    fwp = firmware_poses()
+    for name, psi, q in fwp:
+        jobs.append(("firmware", psi, q, {0, 1, 2, 3}))
     t0 = time.time()
     with Pool(10) as pool:
         res = pool.map(job, jobs, chunksize=2)
@@ -58,7 +61,7 @@ def main():
     for (a, b), (v, kind, psi, q) in sorted(allbad.items(), key=lambda kv: -kv[1][0])[:25]:
         print(f"  OVERLAP {a} x {b}: {v:.1f} mm3 ({kind}, psi={tuple(round(x,1) for x in psi)}, q={tuple(round(x,1) for x in q)})")
     print(f"  ({time.time()-t0:.0f} s)")
-    verdict(ok, "no part-to-part interference (sweep + neighbour extremes + creep cycle)",
+    verdict(ok, "no part-to-part interference (sweep + neighbour extremes + creep cycle + firmware-commanded poses)",
             f"[{sum(s[0] for s in summary.values())} poses]")
     sys.exit(0 if ok else 1)
 

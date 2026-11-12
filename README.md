@@ -33,3 +33,16 @@ Servo/board envelopes are dummies from commonly published dimensions: UNVERIFIED
 - `spider.ino`, `pca9685.h`, `mpu6050.h`, `storage.h`: Arduino layer (own I2C drivers, EEPROM calibration, serial commands + calibration mode).
 - Tests: `firmware/tests/test_spider.cpp` (`g++`), run by `tools/firmware_tests.sh`.
 - Not verified on hardware: servo signs/trims, gait tuning. Compile for the Nano Every needs `arduino-cli` (reported as NOT VERIFIED when missing).
+
+## SPEC deviations / known limits
+- **Coxa torque (AC5) holds only under an assumption.** `cad/params.py` `COXA_FORCE_COEFF = 0.30`: the tangential foot force is taken as
+  0.3 x normal load. Under that load the MG90S coxa margin is **2.32x at 6 V**, **1.90x at 4.8 V** (below the 2x target) and only **1.16x if the foot
+  grips (mu = 0.6)**. The 0.3 coefficient is our choice, not a measurement. Upgrade path: a metal-gear coxa servo rated >= 4.5 kg.cm, or a shorter
+  coxa/reach. **Test the coxa first on the single test leg** (push the foot sideways on a rough surface) before printing the other three legs.
+- **Ground clearance gate = body + servos + boards (>= 40 mm).** Leg linkage parts are lower: the rocker sits ~18.2 mm above the ground at neutral
+  (femur/bracket lug similar, see `check_ground.py` INFO line), below 40 mm. This is a deviation from a literal reading of AC3; keep the legs clear
+  of obstacles above ~15 mm. The sit pose lowers the body underside to ~45.9 mm.
+- Servo sign/trim, gait tuning and all part dimensions are unverified on hardware. Creep weight-shift assumes the CoM at the body centre.
+- Firmware compile for the Nano Every is NOT VERIFIED here (no arduino-cli).
+- Fallback (fixed bent tibia) config: the firmware sit pose (femur +55 deg) is tuned for the four-bar and leaves the fixed-tibia body only ~12 mm
+  above ground in `check_ground.py` (informational there); the fallback would need its own sit angle.

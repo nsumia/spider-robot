@@ -22,7 +22,11 @@ static bool loadCal(spider::ServoCal cal[spider::kServos]) {
   CalBlob b; EEPROM.get(0, b);
   if (b.magic != kCalMagic || b.sum != calSum(b)) return false;
   for (int i = 0; i < spider::kServos; i++) {
-    if ((b.cal[i].dir != 1 && b.cal[i].dir != -1) || !(b.cal[i].min_deg >= 0 && b.cal[i].max_deg <= 180 && b.cal[i].min_deg < b.cal[i].max_deg)) return false;
+    const spider::ServoCal& c = b.cal[i];
+    // reject NaN/Inf (comparisons with NaN are false), bad direction, out-of-range trim or limits
+    if (c.dir != 1 && c.dir != -1) return false;
+    if (!(c.trim_deg >= -30.0f && c.trim_deg <= 30.0f)) return false;
+    if (!(c.min_deg >= 0.0f && c.max_deg <= 180.0f && c.min_deg < c.max_deg)) return false;
   }
   for (int i = 0; i < spider::kServos; i++) cal[i] = b.cal[i];
   return true;

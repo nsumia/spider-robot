@@ -76,6 +76,12 @@ Robot::Robot() : mode_(MODE_STAND), gait_(GAIT_CREEP), params_(defaultParams(GAI
   for (int i = 0; i < 4; i++) { cur_[i].psi = 0; cur_[i].q = kStandQ; }
 }
 
+void Robot::startSitting() {
+  for (int i = 0; i < 4; i++) { cur_[i].psi = 0; cur_[i].q = kSitQ; }
+  mode_ = MODE_SIT;
+  cmd_fwd_ = cmd_turn_ = fwd_ = turn_ = 0;
+}
+
 void Robot::walk(float fwd, float turn) {
   if (mode_ == MODE_FALLEN) return;
   cmd_fwd_ = clampf(fwd, -1.0f, 1.0f);

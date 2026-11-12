@@ -42,6 +42,27 @@ def main():
         za, who = lowest(items)
         if za - ground < min_any:
             min_any, who_any = za - ground, who
+    fwp = firmware_poses()
+    fw_body = fw_serv = 1e9; fw_feet_below = 0.0
+    for name, psi, q in fwp:
+        items = asm.assemble(psi, q)
+        if name != "sit":                       # sit deliberately lowers the body (informational below)
+            fw_body = min(fw_body, lowest(items, names=("PLA", "bom"))[0] - ground)
+            fw_serv = min(fw_serv, lowest(items, names=("servo",))[0] - ground)
+        for i in range(4):
+            z = kin.leg_to_body(i, kin.solve_leg(q[i])["foot"], psi[i])[2] - ground
+            fw_feet_below = min(fw_feet_below, z)
+    # sit: the body drops until the feet (raised by the femur) touch the ground: ground_sit = foot contact z of the sit pose
+    sp = [p for p in fwp if p[0] == "sit"][0]
+    sit_items = asm.assemble(sp[1], sp[2])
+    ground_sit = min(kin.leg_to_body(i, kin.solve_leg(sp[2][i])["foot"], sp[1][i])[2] for i in range(4))
+    sit_body = lowest(sit_items, names=("PLA", "bom"))[0] - ground_sit
+    sit_serv = lowest(sit_items, names=("servo",))[0] - ground_sit
+    good = fw_body >= P.GROUND_CLEARANCE_MIN and (sit_body >= P.GROUND_CLEARANCE_MIN or P.TIBIA_MODE == "fixed") and fw_serv >= P.GROUND_CLEARANCE_MIN and fw_feet_below >= -0.01
+    ok &= good
+    verdict(good, f"firmware-commanded poses ({len(fwp)}: stand, sit, creep/trot fwd/back/left/right): body {fw_body:.1f} mm, servos {fw_serv:.1f} mm "
+                  f"clearance (>= {P.GROUND_CLEARANCE_MIN:.0f}); no foot below ground (min z {fw_feet_below:.2f} mm)")
+    print(f"  INFO sit pose: body underside/electronics {sit_body:.1f} mm above ground (gated >= 40 in the main config; fallback fixed-tibia config: informational, its sit angle would need retuning), servos {sit_serv:.1f} mm (rest pose, not gated)")
     sv = [lowest(asm.assemble(psi, q), names=("servo",))[0] - ground for psi, q in poses]
     good = min_body >= P.GROUND_CLEARANCE_MIN and min(sv) >= P.GROUND_CLEARANCE_MIN
     ok &= good

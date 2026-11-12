@@ -184,7 +184,19 @@ static void test_fall() {
   printf("fall detect: 29 deg no, 31 deg yes, robot stops and sits\n");
 }
 
+static void test_boot() {
+  Robot r; r.startSitting();
+  CHECK(r.mode() == MODE_SIT && fabsf(r.joints()[0].q - 55.0f) < 1e-3f, "boot pose not sit");
+  r.stand();
+  float prev = r.joints()[1].q, maxStep = 0;
+  for (int i = 0; i < 100; i++) { r.update(0.01f, nullptr); maxStep = fmaxf(maxStep, fabsf(r.joints()[1].q - prev)); prev = r.joints()[1].q; }
+  CHECK(fabsf(r.joints()[1].q) < 0.01f, "did not reach stand");
+  CHECK(maxStep <= 1.0f + 1e-3f, "stand ramp too fast: %.2f deg per 10 ms", maxStep);
+  printf("boot: starts sitting, stand ramp max %.2f deg/10 ms\n", maxStep);
+}
+
 int main() {
+  test_boot();
   test_ik_roundtrip(); test_unreachable(); test_creep(); test_trot(); test_servo_limits(); test_fall();
   printf("%d checks, %d failures\n", checks, fails);
   if (fails) { printf("HOST TESTS FAILED\n"); return 1; }

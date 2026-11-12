@@ -17,7 +17,7 @@
    freely, the four-bar keeps the tibia close to vertical, and the servo tabs fit.
 2. Print the rest: 4 legs, body_lower, body_upper.
 3. Fit the servos in the brackets, bolt the legs together with M3 + nylock nuts (tighten until just free).
-4. Mount the lower body deck: battery, UBEC, fuse, switch. Upper deck: Nano, PCA9685, GY-521 (flat, +X forward, near the centre).
+4. Mount the lower body deck: battery, UBEC, fuse, switch. Upper deck: Nano, PCA9685, GY-521 (flat, +X forward, near the centre), 5 V buck + diode for the Nano.
 5. Wire as in `WIRING.md`. Check polarity, set the UBEC to 6 V **before** connecting servos.
 6. Upload `firmware/spider/spider.ino` (Arduino IDE or `arduino-cli compile/upload --fqbn arduino:megaavr:nona4809 firmware/spider`).
    No Adafruit library is needed (own PCA9685/MPU-6050 drivers).
@@ -28,15 +28,19 @@ The CAD assumes `servo_angle = 90 + sign * joint_angle` with sign +1: this is **
 Joint zero: coxa 0 = leg along its diagonal heading, positive = counter-clockwise seen from above; femur 0 = femur 18 deg above horizontal,
 positive = knee up (see `cad/out/leg_geometry.json`).
 
-1. Type `cal`. All servos go to 90. Do this before mounting horns, or with the legs off the ground.
+0. Power-up: the robot boots in the **sit pose**, enabling one leg every 300 ms (no snap to stand), and calibrates the gyro for 1 s: **keep it still
+   and level at power-up**. Type `s` to ramp up to stand. Walking is refused while the IMU is missing or failing; after 10 failed reads in a row the
+   robot prints a warning and sits.
+1. Type `cal`. Servos **keep their current angles** (nothing snaps); move one servo at a time. `all90` is available but moves all of them at once.
 2. Mount the horns so that each coxa points along its diagonal and each femur is about 18 deg above horizontal (foot on the neutral contact point).
-3. For each servo: `sel <0-7>` then adjust with `+`, `-` or `a <deg>`. Use `trim <deg>` so that the joint is exactly at zero when the servo is at 90 deg (or adjust horn).
+3. For each servo: `sel <0-7>`, move it with `+`, `-` or `a <deg>` until the joint is exactly at zero, then `zero` stores `trim = angle - 90`
+   (limited to +-30 deg; use the horn position for larger offsets).
 4. Direction: command `a 100` and see whether coxa goes counter-clockwise / femur lifts the knee. If it moves the wrong way, `dir -1`.
 5. Optionally narrow `min <deg>` / `max <deg>` to avoid mechanical collisions (defaults are the CAD limits: coxa 45-135, femur 60-150).
 6. `save` writes everything to EEPROM (restored at boot); `exit` leaves calibration mode.
 
 ## Commands
-`f` forward, `b` back, `l` / `r` turn left/right, `s` stand, `x` sit, `gait creep|trot`, `clear` (after a fall; then `s`), `stat`.
+`f` forward, `b` back, `l` / `r` turn left/right, `s` stand, `x` sit, `gait creep|trot`, `clear` (after a fall; then `s`), `release on|off` (servos go limp 1.5 s after a fall), `stat`.
 Creep: duty 0.75, 2.5 s cycle. Trot: duty 0.5, 1.0 s cycle (start with creep).
 Fall detection: tilt above 30 deg (complementary filter on the MPU-6050) stops the gait and sits; `clear` then `s` resumes.
 

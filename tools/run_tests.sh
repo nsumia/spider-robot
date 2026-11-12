@@ -23,6 +23,7 @@ run() { # label cmd...
 echo "=== MAIN config: passive parallelogram tibia ==="
 unset SPIDER_TIBIA_MODE
 run build "$PY" cad/build_all.py
+run fw-poses tools/dump_fw_poses.sh   # joint poses commanded by the firmware gaits, consumed by check_ground/check_interference
 for c in check_solids_bed check_fits check_geometry_json check_linkage check_ground check_interference check_torque check_mass; do
   run "$c" "$PY" cad/analysis/$c.py
 done
@@ -38,8 +39,8 @@ echo "--- fixed-check_torque (informational)"
 "$PY" cad/analysis/check_torque.py 2>&1 | sed 's/^FAIL:/FALLBACK-INFO (not gating) FAIL:/; s/^PASS:/FALLBACK-INFO PASS:/'
 unset SPIDER_TIBIA_MODE
 
-expected_main=17   # PASS lines expected from the main config (see checks)
-expected_total=29
+expected_main=18   # PASS lines expected from the main config (see checks)
+expected_total=30
 if grep -q "Traceback" "$log"; then reasons+=("Traceback in output"); fi
 if grep -q "^FAIL:" "$log"; then reasons+=("a check printed FAIL"); fi
 total_pass=$(grep -c "^PASS:" "$log")

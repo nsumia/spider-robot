@@ -29,6 +29,8 @@ enum Mode { MODE_STAND = 0, MODE_SIT, MODE_WALK, MODE_FALLEN };
 class Robot {
  public:
   Robot();
+  // Boot pose: start sitting (feet raised) so power-up never snaps the legs to the stand pose; 'stand' then ramps at 100 deg/s.
+  void startSitting();
   void stand() { cmd_fwd_ = cmd_turn_ = 0; if (mode_ != MODE_FALLEN) mode_ = MODE_STAND; }
   void sit() { cmd_fwd_ = cmd_turn_ = 0; mode_ = MODE_SIT; }
   void walk(float fwd, float turn);             // fwd, turn in [-1,1]
