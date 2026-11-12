@@ -46,6 +46,6 @@ Notes
 - Stall current of 8 servos can exceed 10 A: distribute V+/GND with thick wire and a terminal block directly from the UBEC, **not** through
   the PCA9685 board traces/terminal alone, and keep the wires short. The 10 A fuse may blow at stall: this is intended (size it after measuring).
 - Fit a LiPo low-voltage alarm (3.3 V/cell) on the balance lead; the robot has no battery-voltage sensing.
-- Component ratings (fuse, diode, cap, buck) are recommendations, UNVERIFIED against datasheets. Nano Every VIN range 7-21 V is from the
-  Arduino documentation as recalled by review, re-check before wiring.
+- Component ratings (fuse, diode, cap, buck) are recommendations, UNVERIFIED against datasheets.
+  Nano Every VIN: 7-21 V per Arduino docs — re-check against the datasheet.
 - Sources: brief sections 5 and 6.
