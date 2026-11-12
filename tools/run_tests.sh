@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# THE test command for spider-robot CAD: builds every part, exports STEP/STL + leg_geometry.json, then runs all checks.
+# THE test command for spider-robot: builds every part, exports STEP/STL + leg_geometry.json, runs all CAD checks, then the
+# firmware checks (tools/firmware_tests.sh: generated header up to date, host unit tests, mutation self-tests, arduino-cli compile if present).
 # Exit non-zero if: any step exits non-zero, a Traceback / "FAIL:" line appears, or fewer PASS lines than expected.
 # Fallback (fixed-tibia) config is built and checked too; its torque check is informational only (known: shorter-reach
 # requirement not met, see PROGRESS/LESSONS) -> printed as FALLBACK-INFO, never hides a main-config failure.
@@ -45,7 +46,16 @@ total_pass=$(grep -c "^PASS:" "$log")
 [ "$main_pass" -ge "$expected_main" ] || reasons+=("main config: only $main_pass PASS lines, expected >= $expected_main")
 [ "$total_pass" -ge "$expected_total" ] || reasons+=("only $total_pass PASS lines in total, expected >= $expected_total")
 
-echo "=== SUMMARY: main PASS lines $main_pass, total PASS lines $total_pass"
+echo "=== FIRMWARE: generated header, host unit tests, mutation self-tests, compile"
+fwlog=$(mktemp)
+tools/firmware_tests.sh 2>&1 | tee "$fwlog"
+[ "${PIPESTATUS[0]}" -eq 0 ] || reasons+=("firmware tests failed")
+grep -q "^FAIL" "$fwlog" && reasons+=("a firmware check printed FAIL")
+fw_pass=$(grep -c "^PASS:" "$fwlog")
+[ "$fw_pass" -ge 8 ] || reasons+=("firmware: only $fw_pass PASS lines, expected >= 8")
+rm -f "$fwlog"
+
+echo "=== SUMMARY: CAD main PASS lines $main_pass, CAD total $total_pass, firmware PASS lines $fw_pass"
 if [ ${#reasons[@]} -gt 0 ]; then
   printf 'TESTS FAILED: %s\n' "${reasons[@]}"
   exit 1
