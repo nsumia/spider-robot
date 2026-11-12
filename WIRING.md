@@ -36,7 +36,6 @@ Channel map (`channel = leg * 2 + joint`, legs in the CAD order FL, FR, RR, RL; 
 
 Notes
 - Peak servo current can reach 3-5 A: use short, thick wires from the UBEC to the PCA9685 V+ terminal.
-- The Nano is powered from the UBEC (VIN); do not also connect USB without checking: USB is fine for the serial console only
-  when the servo supply is switched off or when you accept both sources feeding the Nano (the Nano Every has a Schottky on VIN).
-  Safest: calibrate with the servo supply on and USB connected, as the Nano is then powered by whichever is higher.
+- The Nano is powered from the UBEC (VIN). Powering it from USB at the same time is NOT VERIFIED safe for the Nano Every: calibrate with
+  the battery connected and either unplug USB or check the board's VIN/USB isolation first.
 - Sources/ratings: brief sections 5 and 6 (fuse/switch/capacitor values are recommendations, UNVERIFIED).
